@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import application.Main;
 import avisos.Alertas;
+import entidades.servico.ServicoGrupoProduto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,7 +30,7 @@ public class ControladorMainView implements Initializable {
 
 	@FXML
 	public void onMenuItemGrupoProdutoAcao() {
-		loadView("/telas/ListaGrupoProduto.fxml");
+		loadView2("/telas/ListaGrupoProduto.fxml");
 	}
 
 	@FXML
@@ -47,12 +48,12 @@ public class ControladorMainView implements Initializable {
 	}
 
 	private synchronized void loadView(String nomeAbsoluto) { // Função para abrir
-																									// uma outra tela.
-																									// synchronized =
-																									// Garante que o
-																									// processamento não
-																									// será interrompido
-																									// pelo Thread
+																// uma outra tela.
+																// synchronized =
+																// Garante que o
+																// processamento não
+																// será interrompido
+																// pelo Thread
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método '
 																						// (getClass().getResource(nomeAbsoluto))
@@ -72,6 +73,32 @@ public class ControladorMainView implements Initializable {
 			 * Com isso é possível manipular a cena principal e incluir o Main Menu e os
 			 * filhos da janela que está sendo aberta pelo método.
 			 */
+		} catch (IOException e) {
+			Alertas.showAlert("IO Exception", "Erro carregando a página.", e.getMessage(), AlertType.ERROR);
+		}
+	}
+
+	private synchronized void loadView2(String nomeAbsoluto) { // Função para abrir uma outra tela. synchronized =
+																// Garante que o processamento não será interrompido
+																// pelo Thread
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método '
+																						// (getClass().getResource(nomeAbsoluto))
+																						// '
+			VBox newVBox = loader.load();
+
+			Scene mainScene = Main.getMainScene();
+			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+			Node mainMenu = mainVBox.getChildren().get(0);
+
+			mainVBox.getChildren().clear();
+			mainVBox.getChildren().add(mainMenu);
+			mainVBox.getChildren().addAll(newVBox.getChildren());
+
+			ControladorGrupoProduto controller = loader.getController();
+			controller.setServicoGrupoProduto(new ServicoGrupoProduto());
+			controller.updateTableView();
 		} catch (IOException e) {
 			Alertas.showAlert("IO Exception", "Erro carregando a página.", e.getMessage(), AlertType.ERROR);
 		}

@@ -1,10 +1,14 @@
 package telas;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
 import entidades.negocio.GrupoProduto;
+import entidades.servico.ServicoGrupoProduto;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,6 +18,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class ControladorGrupoProduto implements Initializable{
+	
+	private ServicoGrupoProduto service; // Injetar a depeência sem colocar a implementação 'new ServicoGrupoProduto'
 
 	@FXML
 	private TableView<GrupoProduto> tableViewGrupoProduto; // Tipo TableView
@@ -26,15 +32,30 @@ public class ControladorGrupoProduto implements Initializable{
 
 	@FXML
 	private Button btNew; // Tipo Botão
+	
+	private ObservableList<GrupoProduto> obsList;
 
 	@FXML
 	public void onBtNewAction() { // Ação que ocorrerá após o botão 'Novo' ser clicado
 		System.out.println("onBtNewAction");
 	}
+	
+	public void setServicoGrupoProduto(ServicoGrupoProduto service) {
+		this.service = service;
+	}
 
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {
 		InitializeNodes(); // Macete para funcionar um componente da tela. Veja o método 'InitializeNodes()'
+	}
+	
+	public void updateTableView() {
+		if (service == null) {
+			throw new IllegalStateException("Serviço está nulo.");
+		}
+		List<GrupoProduto> list = service.findAll();
+		obsList = FXCollections.observableArrayList(list);
+		tableViewGrupoProduto.setItems(obsList);
 	}
 
 	private void InitializeNodes() {

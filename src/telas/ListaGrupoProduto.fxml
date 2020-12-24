@@ -26,8 +26,8 @@
       </ToolBar>
       <TableView fx:id="tableViewGrupoProduto" prefHeight="200.0" prefWidth="200.0">
         <columns>
-          <TableColumn fx:id="colunaId" prefWidth="75.0" text="ID" />
-          <TableColumn fx:id="colunaDescGrupo" prefWidth="75.0" text="Nome" />
+          <TableColumn fx:id="colunaId" prefWidth="35.0" text="ID" />
+          <TableColumn fx:id="colunaDescGrupo" prefWidth="229.0" text="Nome" />
         </columns>
       </TableView>
    </children>
