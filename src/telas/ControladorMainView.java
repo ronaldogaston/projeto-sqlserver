@@ -29,7 +29,7 @@ public class ControladorMainView implements Initializable {
 
 	@FXML
 	public void onMenuItemGrupoProdutoAcao() {
-		System.out.println("onMenuItemGrupoProdutoAcao");
+		loadView("/telas/ListaGrupoProduto.fxml");
 	}
 
 	@FXML
