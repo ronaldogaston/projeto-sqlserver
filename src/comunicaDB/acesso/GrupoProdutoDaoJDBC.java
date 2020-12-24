@@ -66,7 +66,7 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		try {
 			st = conn.prepareStatement(
 					"UPDATE GrupoProduto "
-					+ "SET descGrupo = ? "
+					+ "SET grpDescGrupo = ? "
 					+ "WHERE idGrupoProduto = ?");
 
 			st.setString(1, grupoProduto.getDescGrupo());
@@ -141,8 +141,8 @@ PreparedStatement st = null;
 
 	private GrupoProduto instanciaGrupoProduto(ResultSet rs) throws SQLException {
 		GrupoProduto grp = new GrupoProduto();
-		grp.setId(rs.getInt("id"));
-		grp.setDescGrupo(rs.getString("descGrupo"));
+		grp.setId(rs.getInt("idGrupoProduto"));
+		grp.setDescGrupo(rs.getString("grpDescGrupo"));
 		return grp;
 	}
 
@@ -155,7 +155,7 @@ PreparedStatement st = null;
 			st = conn.prepareStatement(
 					"SELECT * "
 					+ "FROM GrupoProduto "
-					+ "ORDER BY descGrupo");
+					+ "ORDER BY idGrupoProduto");
 
 			rs = st.executeQuery();
 
