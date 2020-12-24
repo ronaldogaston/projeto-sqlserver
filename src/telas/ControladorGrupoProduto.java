@@ -97,6 +97,7 @@ public class ControladorGrupoProduto implements Initializable {
 
 			ControladorCadastroGrupoProduto controller = loader.getController();
 			controller.setGrupoProduto(grp);
+			controller.setServicoGrupoProduto(new ServicoGrupoProduto());
 			controller.updateDados();
 			
 			Stage dialogoStage = new Stage();

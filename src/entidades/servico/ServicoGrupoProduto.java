@@ -13,4 +13,12 @@ public class ServicoGrupoProduto {
 		return dao.findAll();
 	}
 
+	public void inserirOuAtualizarGrupoProduto(GrupoProduto grp) {
+		if (grp.getId() == null) {
+			dao.insert(grp);
+		}
+		else {
+			dao.update(grp);
+		}
+	}	
 }
