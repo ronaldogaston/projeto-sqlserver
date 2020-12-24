@@ -51,7 +51,8 @@ public class ControladorGrupoProduto implements Initializable {
 	@FXML
 	public void onBtNewAction(ActionEvent event) { // Ação que ocorrerá após o botão 'Novo' ser clicado -- (ActionEvent event) Para ter referencia do controle que receber o evento
 		Stage parentStage = Utils.currentStage(event);
-		cadastroDialogoFormulario("/telas/GrupoProdutoCadastro.fxml", parentStage); // Chamada do método de formulário de cadastro
+		GrupoProduto grp = new GrupoProduto();
+		cadastroDialogoFormulario(grp, "/telas/GrupoProdutoCadastro.fxml", parentStage); // Chamada do método de formulário de cadastro
 	}
 
 	public void setServicoGrupoProduto(ServicoGrupoProduto service) {
@@ -89,11 +90,15 @@ public class ControladorGrupoProduto implements Initializable {
 		tableViewGrupoProduto.prefHeightProperty().bind(stage.heightProperty());
 	}
 
-	private void cadastroDialogoFormulario(String nomeAbsoluto, Stage parentStage) { // Janela de Diálogo
+	private void cadastroDialogoFormulario(GrupoProduto grp, String nomeAbsoluto, Stage parentStage) { // Janela de Diálogo
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método ' (getClass().getResource(nomeAbsoluto)) '
 			Pane pane = loader.load();
 
+			ControladorCadastroGrupoProduto controller = loader.getController();
+			controller.setGrupoProduto(grp);
+			controller.updateDados();
+			
 			Stage dialogoStage = new Stage();
 
 			dialogoStage.setTitle("Informe os dados do departamento");
