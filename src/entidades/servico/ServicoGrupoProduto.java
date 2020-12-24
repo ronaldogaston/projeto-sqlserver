@@ -1,17 +1,16 @@
 package entidades.servico;
-import java.util.ArrayList;
 import java.util.List;
 
+import comunicaDB.FabricaDao;
+import comunicaDB.GrupoProdutoDao;
 import entidades.negocio.GrupoProduto;
 
 public class ServicoGrupoProduto {
+	
+	private GrupoProdutoDao dao = FabricaDao.cadastroGrupoProdutoDao();
 
 	public List<GrupoProduto> findAll(){
-		List<GrupoProduto> list = new ArrayList<>();
-		list.add(new GrupoProduto(1, "BEBIDAS"));
-		list.add(new GrupoProduto(2, "LANCHES"));
-		list.add(new GrupoProduto(3, "DOCES"));
-		return list;
+		return dao.findAll();
 	}
 
 }

@@ -22,6 +22,10 @@ public class GrupoProduto implements Serializable {
 		return id;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public String getDescGrupo() {
 		return descGrupo;
 	}

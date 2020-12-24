@@ -31,7 +31,7 @@ public class ControladorMainView implements Initializable {
 
 	@FXML
 	public void onMenuItemGrupoProdutoAcao() {
-		loadView("/telas/listaGrupoProduto.fxml", (ControladorGrupoProduto controller) -> {
+		loadView("/telas/GrupoProdutoLista.fxml", (ControladorGrupoProduto controller) -> {
 			controller.setServicoGrupoProduto(new ServicoGrupoProduto());
 			controller.updateTableView();
 		});
@@ -83,32 +83,6 @@ public class ControladorMainView implements Initializable {
 			initializingAction.accept(controller); // Irão executar a função que está sendo passada como argumento no
 													// método 'onMenuItemDepartamentoAction' entre outros métodos
 
-		} catch (IOException e) {
-			Alertas.showAlert("IO Exception", "Erro carregando a página.", e.getMessage(), AlertType.ERROR);
-		}
-	}
-
-	private synchronized void loadView2(String nomeAbsoluto) { // Função para abrir uma outra tela. synchronized =
-																// Garante que o processamento não será interrompido
-																// pelo Thread
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método '
-																						// (getClass().getResource(nomeAbsoluto))
-																						// '
-			VBox newVBox = loader.load();
-
-			Scene mainScene = Main.getMainScene();
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-
-			Node mainMenu = mainVBox.getChildren().get(0);
-
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
-
-			ControladorGrupoProduto controller = loader.getController();
-			controller.setServicoGrupoProduto(new ServicoGrupoProduto());
-			controller.updateTableView();
 		} catch (IOException e) {
 			Alertas.showAlert("IO Exception", "Erro carregando a página.", e.getMessage(), AlertType.ERROR);
 		}
