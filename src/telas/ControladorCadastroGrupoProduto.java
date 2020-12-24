@@ -1,13 +1,19 @@
 package telas;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import avisos.Alertas;
 import avisos.Restricoes;
 import db.ExcecoesDB;
+import entidades.excecoes.ValidacaoDeExcecao;
 import entidades.negocio.GrupoProduto;
 import entidades.servico.ServicoGrupoProduto;
+import gui.ouvintes.AtualizaDadosLista;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,6 +28,8 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 	private GrupoProduto entity;
 	
 	private ServicoGrupoProduto srvGrupoProduto;
+	
+	private List<AtualizaDadosLista> atualizaDadosLista = new ArrayList<>();
 
 	@FXML
 	private TextField txtId;
@@ -42,9 +50,13 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 		this.srvGrupoProduto = srvGrupoProduto;
 	}
 	
+	public void sobrescreveAtualizaDadosLista (AtualizaDadosLista ouvintes) {
+		atualizaDadosLista.add(ouvintes);
+	}
+	
 	@FXML
 	public void onBtSalvarAction(ActionEvent event) {
-		System.out.println("onBtSalvarAction");			if (entity == null) {
+		if (entity == null) {
 			throw new IllegalStateException("Entity está nulo");
 		}
 		if (srvGrupoProduto == null) {
@@ -53,19 +65,40 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 		try {
 			entity = getFormData();
 			srvGrupoProduto.inserirOuAtualizarGrupoProduto(entity);
+			notificaAtualizaDadosLista();
 			Utils.currentStage(event).close();
+		}
+		catch (ValidacaoDeExcecao e) {
+			setMensagemDeErros(e.getErros());
 		}
 		catch (ExcecoesDB e) {
 			Alertas.showAlert("Erro ao salvar departamento", null, e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
+	private void notificaAtualizaDadosLista() {
+		for (AtualizaDadosLista x : atualizaDadosLista) {
+			x.onAtualizaDados();
+		}
+	}
+	
 	private GrupoProduto getFormData() {
 		GrupoProduto grp = new GrupoProduto();
+		
+		ValidacaoDeExcecao excecao = new ValidacaoDeExcecao("Validação de erro!");
 
 		grp.setId(Utils.tryParseToInt(txtId.getText())); // Verifica se o campo está preenchido com número inteiro
+		
+		if (txtDescGrupo.getText() == null || txtDescGrupo.getText().trim().equals("")) { // trim = Para eliminar qualquer espaço em branco no inicio ou no final.
+			excecao.addErros("nome", " O campo não pode estar vazio!");
+		}
+		
 		grp.setDescGrupo(txtDescGrupo.getText());
 
+		if (excecao.getErros().size() > 0) { // Teste na coleção de erros, se há algum erro.
+			throw excecao;
+		}
+		
 		return grp;
 	}
 
@@ -95,5 +128,13 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 	private void initializeNodes() {
 		Restricoes.setTextFieldInteger(txtId);
 		Restricoes.setTextFieldMaxLength(txtDescGrupo, 30);
+	}
+	
+	private void setMensagemDeErros(Map<String, String> erros) { //Método para pegar os erros da exceção e anexar na tela
+		Set<String> fields = erros.keySet();
+
+		if (fields.contains("nome")) {
+			labelErrortxtDescricao.setText(erros.get("nome"));
+		}
 	}
 }

@@ -9,6 +9,8 @@ import application.Main;
 import avisos.Alertas;
 import entidades.negocio.GrupoProduto;
 import entidades.servico.ServicoGrupoProduto;
+import gui.ouvintes.AtualizaDadosLista;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,7 +29,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utilitario.Utils;
 
-public class ControladorGrupoProduto implements Initializable {
+public class ControladorGrupoProduto implements Initializable, AtualizaDadosLista {
 
 	private ServicoGrupoProduto service; // Injetar a depeência sem colocar a implementação 'new ServicoGrupoProduto'
 
@@ -42,6 +45,9 @@ public class ControladorGrupoProduto implements Initializable {
 	private TableColumn<GrupoProduto, Integer> colunaDescGrupo; // Tipo Coluna. OBS: Lembrando que só declarar o mesmo
 																// não faz com que funcione. Verifique o método
 																// 'initialize (URL uri, ResourceBundle rb)'
+	
+	@FXML
+	private TableColumn<GrupoProduto, GrupoProduto> colunaEditar; // Tipo Coluna. OBS: Lembrando que só declarar o mesmo
 
 	@FXML
 	private Button btNew; // Tipo Botão
@@ -72,15 +78,12 @@ public class ControladorGrupoProduto implements Initializable {
 		List<GrupoProduto> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewGrupoProduto.setItems(obsList);
+		inicBotaoEditar();
 	}
 
 	private void InitializeNodes() {
 		colunaId.setCellValueFactory(new PropertyValueFactory<>("id")); // Comando para iniciar apropriadamento o
-																		// comportamento da coluna na tabela
-		colunaDescGrupo.setCellValueFactory(new PropertyValueFactory<>("descGrupo")); // Comando para iniciar
-																						// apropriadamento o
-																						// comportamento da coluna na
-																						// tabela
+		colunaDescGrupo.setCellValueFactory(new PropertyValueFactory<>("descGrupo")); // Comando para iniciar apropriadamento o comportamento da coluna na tabela
 
 		/*
 		 * Comando para a tabela acompanhar a altura da janela ABAIXO
@@ -92,30 +95,57 @@ public class ControladorGrupoProduto implements Initializable {
 
 	private void cadastroDialogoFormulario(GrupoProduto grp, String nomeAbsoluto, Stage parentStage) { // Janela de Diálogo
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método ' (getClass().getResource(nomeAbsoluto)) '
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método // (getClass().getResource(nomeAbsoluto))
 			Pane pane = loader.load();
 
 			ControladorCadastroGrupoProduto controller = loader.getController();
 			controller.setGrupoProduto(grp);
 			controller.setServicoGrupoProduto(new ServicoGrupoProduto());
+			controller.sobrescreveAtualizaDadosLista(this); // Cadeia de chamadas até o método 'onAtualizaDados'
 			controller.updateDados();
 			
 			Stage dialogoStage = new Stage();
 
-			dialogoStage.setTitle("Informe os dados do departamento");
+			dialogoStage.setTitle("Informe os dados do GrupoProduto");
 			dialogoStage.setScene(new Scene(pane)); // Chamada de nova janela (janela filho) que irá sobrepor a anterior
 			dialogoStage.setResizable(false); // Faz com que a tela NÃO possa ser máximizada/minimizada (Redimencionada)
 			dialogoStage.initOwner(parentStage); // Chamada da janela pai da janela filho
-			dialogoStage.initModality(Modality.WINDOW_MODAL); // Bloqueia o acesso as telas de fundos até que janela filho tenha sido finalizada com sucesso
-			dialogoStage.showAndWait(); 
+			dialogoStage.initModality(Modality.WINDOW_MODAL); // Bloqueia o acesso as telas de fundos até que janela
+			dialogoStage.showAndWait(); // filho tenha sido finalizada com sucesso
 
 			/*
-			 * Função para chamar a Janela do formulário de dialogo
-			 * Para preencher o novo departamento
-			 */
+			 * Função para chamar a Janela do formulário de dialogo				
+			 * Função para chamar a Janela do formulário de dialogo Para preencher o novo
+			 * Para preencher o novo departamento				 
+			 * departamento
+			 */			
 		} 
 		catch (IOException e) {
 			Alertas.showAlert("IO Exception", "Erro ao carrega janela", e.getMessage(), AlertType.ERROR);
 		}
+	}
+	
+	@Override
+	public void onAtualizaDados() {
+		updateTableView();
+	}
+	
+	private void inicBotaoEditar() {
+		colunaEditar.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+		colunaEditar.setCellFactory(param -> new TableCell<GrupoProduto, GrupoProduto>() {
+			private final Button button = new Button("Editar");
+
+			@Override
+			protected void updateItem(GrupoProduto obj, boolean empty) {
+				super.updateItem(obj, empty);
+				if (obj == null) {
+					setGraphic(null);
+					return;
+				}
+				setGraphic(button);
+				button.setOnAction(
+						event -> cadastroDialogoFormulario(obj, "/telas/GrupoProdutoCadastro.fxml", Utils.currentStage(event)));
+			}
+		});
 	}
 }

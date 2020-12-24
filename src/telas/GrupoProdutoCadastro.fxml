@@ -27,7 +27,7 @@
             <Label text="ID" />
             <Label text="Descrição" GridPane.rowIndex="1" />
             <TextField fx:id="txtId" editable="false" GridPane.columnIndex="1" />
-            <TextField fx:id="txtDescricao" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="txtDescGrupo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label fx:id="labelErrortxtDescricao" textFill="#fc0000" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
