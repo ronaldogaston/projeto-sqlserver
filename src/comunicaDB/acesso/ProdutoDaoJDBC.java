@@ -16,7 +16,7 @@ import db.ExcecoesDB;
 import entidades.negocio.GrupoProduto;
 import entidades.negocio.Produto;
 
-public class ProdutoDaoJDBC implements ProdutoDao{
+public class ProdutoDaoJDBC implements ProdutoDao {
 
 	private Connection conn;
 
@@ -29,12 +29,8 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement(
-					"INSERT INTO produto "
-					+ "(codigo, descProd, preco, idGrupoProduto) "
-					+ "VALUES "
-					+ "(?, ?, ?, ?)", 
-					Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement("INSERT INTO produto " + "(proCodigo, proDescProd, proPreco, idGrupoProduto) "
+					+ "VALUES " + "(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setInt(1, produto.getCodigo());
 			st.setString(2, produto.getDescProd());
@@ -50,15 +46,12 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 					produto.setId(id);
 				}
 				DB.closeResultSet(rs);
-			}
-			else {
+			} else {
 				throw new ExcecoesDB("Erro inesperado, nehuma linha afetada!");
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -68,10 +61,8 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement(
-					"UPDATE Produto "
-					+ "SET codigo = ?, descProd = ?, preco = ?, idGrupoProduto = ? "
-					+ "WHERE Id = ?");
+			st = conn.prepareStatement("UPDATE Produto "
+					+ "SET proCodigo = ?, proDescProd = ?, proPreco = ?, proGrupoProduto = ? " + "WHERE idProduto = ?");
 
 			st.setInt(1, produto.getCodigo());
 			st.setString(2, produto.getDescProd());
@@ -79,11 +70,9 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 			st.setInt(4, produto.getGrupoProduto().getId());
 
 			st.executeUpdate();
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -101,15 +90,12 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 
 			if (linhasAfetadas == 0) {
 				throw new ExcecoesDB("Nenhuma linha foi afetada.");
-			}
-			else {
+			} else {
 				System.out.println("Deletado com sucesso!");
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -120,10 +106,8 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement(
-					"SELECT Produto.*, GrupoProduto.DescGrupo as Desc_Grupo "
-					+ "FROM Produto INNER JOIN GrupoProduto "
-					+ "ON Produto.IdGrupoProduto "
+			st = conn.prepareStatement("SELECT Produto.*, GrupoProduto.grpDescGrupo as Desc_Grupo "
+					+ "FROM Produto INNER JOIN GrupoProduto " + "ON Produto.proGrupoProduto "
 					+ "WHERE Produto.proGrupoProduto = ?");
 
 			st.setInt(1, id);
@@ -133,15 +117,12 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 				GrupoProduto grp = instanciaGrupoProduto(rs);
 				Produto produto = instanciaProduto(rs, grp);
 				return produto;
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
@@ -150,7 +131,9 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 	private Produto instanciaProduto(ResultSet rs, GrupoProduto grp) throws SQLException {
 		Produto produto = new Produto();
 		produto.setId(rs.getInt("idProduto"));
-		produto.setDescProd(rs.getString("descProd"));
+		produto.setCodigo(rs.getInt("proCodigo"));
+		produto.setDescProd(rs.getString("proDescProd"));
+		produto.setPreco(rs.getDouble("proPreco"));
 		produto.setGrupoProduto(grp);
 		return produto;
 	}
@@ -158,7 +141,7 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 	private GrupoProduto instanciaGrupoProduto(ResultSet rs) throws SQLException {
 		GrupoProduto grp = new GrupoProduto();
 		grp.setId(rs.getInt("idGrupoProduto"));
-		grp.setDescGrupo(rs.getString("DescGrupo"));
+		grp.setDescGrupo(rs.getString("grpDescGrupo"));
 		return grp;
 	}
 
@@ -168,16 +151,14 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement(
-					"SELECT Produto.*, GrupoProduto.DescNome as Desc_Grupo "
-					+ "FROM produto INNER JOIN GrupoProduto "
-					+ "ON Produto.proGrupoProduto = GrupoProduto.idGrupoProduto "
-					+ "ORDER BY DescProd");
+			st = conn.prepareStatement("SELECT * "
+					+ "FROM Produto INNER JOIN GrupoProduto "
+					+ "ON Produto.proGrupoProduto = GrupoProduto.idGrupoProduto " + "ORDER BY proDescProd");
 
 			rs = st.executeQuery();
 
 			List<Produto> list = new ArrayList<>();
-			Map<Integer, GrupoProduto> map = new HashMap<>(); // Será guardado qualquer grpartamento instaciado
+			Map<Integer, GrupoProduto> map = new HashMap<>(); // Será guardado qualquer grGrupoProduto instaciado
 
 			while (rs.next()) {
 
@@ -191,11 +172,9 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 				list.add(produto);
 			}
 			return list;
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
@@ -207,12 +186,10 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement(
-					"SELECT Produto.*, GrupoProduto.descGrupo as Desc_Grupo "
+			st = conn.prepareStatement("SELECT Produto.*, GrupoProduto.grpDescGrupo as Desc_Grupo "
 					+ "FROM Produto INNER JOIN GrupoProduto "
 					+ "ON Produto.proGrupoProduto = GrupoProduto.idGrupoProduto "
-					+ "WHERE GrupoProduto.idGrupoProduto = ? "
-					+ "ORDER BY DescProd");
+					+ "WHERE GrupoProduto.idGrupoProduto = ? " + "ORDER BY proDescProd");
 
 			st.setInt(1, grpGrupoProduto.getId());
 			rs = st.executeQuery();
@@ -232,11 +209,9 @@ public class ProdutoDaoJDBC implements ProdutoDao{
 				list.add(produto);
 			}
 			return list;
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}

@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="444.0" prefWidth="816.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="telas.ControladorGrupoProduto">
+<VBox prefHeight="444.0" prefWidth="816.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="telas.ControladorProduto">
    <children>
-      <Label text="Cadastro de Grupo Produto">
+      <Label text="Cadastro de Produto">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -24,10 +24,13 @@
           <Button fx:id="btNew" mnemonicParsing="false" onAction="#onBtNewAction" text="Novo" />
         </items>
       </ToolBar>
-      <TableView fx:id="tableViewGrupoProduto" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableViewProduto" prefHeight="200.0" prefWidth="200.0">
         <columns>
           <TableColumn fx:id="colunaId" prefWidth="56.0" text="ID" />
-          <TableColumn fx:id="colunaDescGrupo" prefWidth="105.0" text="Nome" />
+          <TableColumn fx:id="colunaCodigo" prefWidth="124.0" text="Código" />
+          <TableColumn fx:id="colunaDescProd" prefWidth="124.0" text="Descrição" />
+          <TableColumn fx:id="colunaPreco" prefWidth="124.0" text="Preço" />
+          <TableColumn fx:id="colunaGrupoProduto" prefWidth="124.0" text="GrupoProduto" />
             <TableColumn fx:id="colunaEditar" prefWidth="94.0" />
             <TableColumn fx:id="colunaRemove" prefWidth="94.0" />
         </columns>

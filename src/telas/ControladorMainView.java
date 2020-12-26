@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import application.Main;
 import avisos.Alertas;
 import entidades.servico.ServicoGrupoProduto;
+import entidades.servico.ServicoProduto;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,7 +40,10 @@ public class ControladorMainView implements Initializable {
 
 	@FXML
 	public void onMenuItemProdutoAcao() {
-		System.out.println("onMenuItemProdutoAcao");
+		loadView("/telas/ProdutoLista.fxml", (ControladorProduto controller) -> {
+			controller.setServicoProduto(new ServicoProduto());
+			controller.updateTableView();
+		});
 	}
 
 	@FXML

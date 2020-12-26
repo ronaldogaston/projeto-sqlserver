@@ -61,6 +61,9 @@ public class GrupoProduto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GrupoProduto [id=" + id + ", descGrupo=" + descGrupo + "]";
+		return "["
+				+ id
+				+ "] - "
+				+ getDescGrupo();
 	}
 }
