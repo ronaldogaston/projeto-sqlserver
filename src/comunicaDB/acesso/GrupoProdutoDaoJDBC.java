@@ -12,6 +12,7 @@ import java.util.Map;
 
 import comunicaDB.GrupoProdutoDao;
 import db.DB;
+import db.DbIntegrityException;
 import db.ExcecoesDB;
 import entidades.negocio.GrupoProduto;
 
@@ -28,11 +29,7 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement(
-					"INSERT INTO GrupoProduto "
-					+ "(grpDescGrupo) "
-					+ "VALUES "
-					+ "(?)", 
+			st = conn.prepareStatement("INSERT INTO GrupoProduto " + "(grpDescGrupo) " + "VALUES " + "(?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, grupoProduto.getDescGrupo());
@@ -46,15 +43,12 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 					grupoProduto.setId(id);
 				}
 				DB.closeResultSet(rs);
-			}
-			else {
+			} else {
 				throw new ExcecoesDB("Erro inesperado, nehuma linha afetada!");
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 	}
@@ -64,27 +58,22 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement(
-					"UPDATE GrupoProduto "
-					+ "SET grpDescGrupo = ? "
-					+ "WHERE idGrupoProduto = ?");
+			st = conn.prepareStatement("UPDATE GrupoProduto " + "SET grpDescGrupo = ? " + "WHERE idGrupoProduto = ?");
 
 			st.setString(1, grupoProduto.getDescGrupo());
 			st.setInt(2, grupoProduto.getId());
 
 			st.executeUpdate();
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
-		}		
+		}
 	}
 
 	@Override
 	public void deleteById(Integer id) {
-PreparedStatement st = null;
+		PreparedStatement st = null;
 
 		try {
 			st = conn.prepareStatement("DELETE FROM GrupoProduto WHERE idGrupoProduto = ?");
@@ -95,17 +84,14 @@ PreparedStatement st = null;
 
 			if (linhasAfetadas == 0) {
 				throw new ExcecoesDB("Nenhuma linha foi afetada.");
-			}
-			else {
+			} else {
 				System.out.println("Deletado com sucesso!");
 			}
-		}
-		catch (SQLException e) {
-			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} catch (SQLException e) {
+			throw new DbIntegrityException(e.getMessage());
+		} finally {
 			DB.closeStatement(st);
-		}		
+		}
 	}
 
 	@Override
@@ -114,10 +100,7 @@ PreparedStatement st = null;
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement(
-					"SELECT * "
-					+ "FROM GrupoProduto "
-					+ "WHERE idGrupoProduto = ?");
+			st = conn.prepareStatement("SELECT * " + "FROM GrupoProduto " + "WHERE idGrupoProduto = ?");
 
 			st.setInt(1, id);
 			rs = st.executeQuery();
@@ -125,15 +108,12 @@ PreparedStatement st = null;
 			if (rs.next()) {
 				GrupoProduto grp = instanciaGrupoProduto(rs);
 				return grp;
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
@@ -152,10 +132,7 @@ PreparedStatement st = null;
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement(
-					"SELECT * "
-					+ "FROM GrupoProduto "
-					+ "ORDER BY idGrupoProduto");
+			st = conn.prepareStatement("SELECT * " + "FROM GrupoProduto " + "ORDER BY idGrupoProduto");
 
 			rs = st.executeQuery();
 
@@ -173,11 +150,9 @@ PreparedStatement st = null;
 				list.add(grp);
 			}
 			return list;
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}

@@ -3,10 +3,12 @@ package telas;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.Main;
 import avisos.Alertas;
+import db.DbIntegrityException;
 import entidades.negocio.GrupoProduto;
 import entidades.servico.ServicoGrupoProduto;
 import gui.ouvintes.AtualizaDadosLista;
@@ -20,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,6 +37,9 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 	private ServicoGrupoProduto service; // Injetar a depeência sem colocar a implementação 'new ServicoGrupoProduto'
 
 	@FXML
+	private TableColumn<GrupoProduto, GrupoProduto> colunaRemove;
+
+	@FXML
 	private TableView<GrupoProduto> tableViewGrupoProduto; // Tipo TableView
 
 	@FXML
@@ -45,7 +51,7 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 	private TableColumn<GrupoProduto, Integer> colunaDescGrupo; // Tipo Coluna. OBS: Lembrando que só declarar o mesmo
 																// não faz com que funcione. Verifique o método
 																// 'initialize (URL uri, ResourceBundle rb)'
-	
+
 	@FXML
 	private TableColumn<GrupoProduto, GrupoProduto> colunaEditar; // Tipo Coluna. OBS: Lembrando que só declarar o mesmo
 
@@ -55,10 +61,12 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 	private ObservableList<GrupoProduto> obsList;
 
 	@FXML
-	public void onBtNewAction(ActionEvent event) { // Ação que ocorrerá após o botão 'Novo' ser clicado -- (ActionEvent event) Para ter referencia do controle que receber o evento
+	public void onBtNewAction(ActionEvent event) { // Ação que ocorrerá após o botão 'Novo' ser clicado -- (ActionEvent
+													// event) Para ter referencia do controle que receber o evento
 		Stage parentStage = Utils.currentStage(event);
 		GrupoProduto grp = new GrupoProduto();
-		cadastroDialogoFormulario(grp, "/telas/GrupoProdutoCadastro.fxml", parentStage); // Chamada do método de formulário de cadastro
+		cadastroDialogoFormulario(grp, "/telas/GrupoProdutoCadastro.fxml", parentStage); // Chamada do método de
+																							// formulário de cadastro
 	}
 
 	public void setServicoGrupoProduto(ServicoGrupoProduto service) {
@@ -79,11 +87,15 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 		obsList = FXCollections.observableArrayList(list);
 		tableViewGrupoProduto.setItems(obsList);
 		inicBotaoEditar();
+		inicBotaoRemove();
 	}
 
 	private void InitializeNodes() {
 		colunaId.setCellValueFactory(new PropertyValueFactory<>("id")); // Comando para iniciar apropriadamento o
-		colunaDescGrupo.setCellValueFactory(new PropertyValueFactory<>("descGrupo")); // Comando para iniciar apropriadamento o comportamento da coluna na tabela
+		colunaDescGrupo.setCellValueFactory(new PropertyValueFactory<>("descGrupo")); // Comando para iniciar
+																						// apropriadamento o
+																						// comportamento da coluna na
+																						// tabela
 
 		/*
 		 * Comando para a tabela acompanhar a altura da janela ABAIXO
@@ -93,9 +105,11 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 		tableViewGrupoProduto.prefHeightProperty().bind(stage.heightProperty());
 	}
 
-	private void cadastroDialogoFormulario(GrupoProduto grp, String nomeAbsoluto, Stage parentStage) { // Janela de Diálogo
+	private void cadastroDialogoFormulario(GrupoProduto grp, String nomeAbsoluto, Stage parentStage) { // Janela de
+																										// Diálogo
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método // (getClass().getResource(nomeAbsoluto))
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(nomeAbsoluto)); // Padrão do método //
+																						// (getClass().getResource(nomeAbsoluto))
 			Pane pane = loader.load();
 
 			ControladorCadastroGrupoProduto controller = loader.getController();
@@ -103,7 +117,7 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 			controller.setServicoGrupoProduto(new ServicoGrupoProduto());
 			controller.sobrescreveAtualizaDadosLista(this); // Cadeia de chamadas até o método 'onAtualizaDados'
 			controller.updateDados();
-			
+
 			Stage dialogoStage = new Stage();
 
 			dialogoStage.setTitle("Informe os dados do GrupoProduto");
@@ -114,17 +128,15 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 			dialogoStage.showAndWait(); // filho tenha sido finalizada com sucesso
 
 			/*
-			 * Função para chamar a Janela do formulário de dialogo				
-			 * Função para chamar a Janela do formulário de dialogo Para preencher o novo
-			 * Para preencher o novo departamento				 
-			 * departamento
-			 */			
-		} 
-		catch (IOException e) {
+			 * Função para chamar a Janela do formulário de dialogo Função para chamar a
+			 * Janela do formulário de dialogo Para preencher o novo Para preencher o novo
+			 * departamento departamento
+			 */
+		} catch (IOException e) {
 			Alertas.showAlert("IO Exception", "Erro ao carrega janela", e.getMessage(), AlertType.ERROR);
 		}
 	}
-	
+
 	@Override
 	public void onAtualizaDados() {
 		updateTableView();
@@ -147,5 +159,39 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 						event -> cadastroDialogoFormulario(obj, "/telas/GrupoProdutoCadastro.fxml", Utils.currentStage(event)));
 			}
 		});
+	}
+
+	private void inicBotaoRemove() {
+		colunaRemove.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+		colunaRemove.setCellFactory(param -> new TableCell<GrupoProduto, GrupoProduto>() {
+			private final Button button = new Button("remove");
+
+			@Override
+			protected void updateItem(GrupoProduto obj, boolean empty) {
+				super.updateItem(obj, empty);
+				if (obj == null) {
+					setGraphic(null);
+					return;
+				}
+				setGraphic(button);
+				button.setOnAction(event -> removeEntity(obj));
+			}
+		});
+	}
+
+	private void removeEntity(GrupoProduto obj) {
+		Optional<ButtonType> result = Alertas.showConfirmation("Confirmação", "Tem certeza que deseja excluir ?");
+		// Optional é o objeto que carrega outro objeto podendo estar presente ou não.
+		if (result.get() == ButtonType.OK) { // result.get = Para poder acessar esse outro objeto.
+			if (service == null) { // Teste se o programador esqueceu de 'injetar' a dependencia
+				throw new IllegalStateException("Serviço está nulo");
+			}
+			try {
+				service.remove(obj);
+				updateTableView(); // Força atualização dos dados da tabela.
+			} catch (DbIntegrityException e) {
+				Alertas.showAlert("Erro ao tentar remover !", null, e.getMessage(), AlertType.ERROR);
+			}
+		}
 	}
 }

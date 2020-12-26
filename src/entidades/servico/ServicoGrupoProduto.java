@@ -21,4 +21,8 @@ public class ServicoGrupoProduto {
 			dao.update(grp);
 		}
 	}	
+	
+	public void remove(GrupoProduto grp) {
+		dao.deleteById(grp.getId());
+	}
 }

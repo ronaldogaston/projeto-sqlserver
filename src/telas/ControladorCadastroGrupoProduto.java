@@ -103,8 +103,7 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 	}
 
 	@FXML
-	public void onBtCancelarAction(ActionEvent event) {
-		System.out.println("onBtCancelarAction");			
+	public void onBtCancelarAction(ActionEvent event) {	
 		Utils.currentStage(event).close();
 	}		
 	
