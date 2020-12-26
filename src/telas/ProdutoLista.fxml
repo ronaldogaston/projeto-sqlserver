@@ -30,7 +30,7 @@
           <TableColumn fx:id="colunaCodigo" prefWidth="124.0" text="Código" />
           <TableColumn fx:id="colunaDescProd" prefWidth="124.0" text="Descrição" />
           <TableColumn fx:id="colunaPreco" prefWidth="124.0" text="Preço" />
-          <TableColumn fx:id="colunaGrupoProduto" prefWidth="124.0" text="GrupoProduto" />
+          <TableColumn fx:id="colunaGrupoProduto" prefWidth="124.0" text="Grupo Produto" />
             <TableColumn fx:id="colunaEditar" prefWidth="94.0" />
             <TableColumn fx:id="colunaRemove" prefWidth="94.0" />
         </columns>

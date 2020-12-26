@@ -29,7 +29,7 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO produto " + "(proCodigo, proDescProd, proPreco, idGrupoProduto) "
+			st = conn.prepareStatement("INSERT INTO Produto " + "(proCodigo, proDescProd, proPreco, proGrupoProduto) "
 					+ "VALUES " + "(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setInt(1, produto.getCodigo());
@@ -68,6 +68,7 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 			st.setString(2, produto.getDescProd());
 			st.setDouble(3, produto.getPreco());
 			st.setInt(4, produto.getGrupoProduto().getId());
+			st.setInt(5, produto.getId());
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -106,7 +107,7 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement("SELECT Produto.*, GrupoProduto.grpDescGrupo as Desc_Grupo "
+			st = conn.prepareStatement("SELECT * "
 					+ "FROM Produto INNER JOIN GrupoProduto " + "ON Produto.proGrupoProduto "
 					+ "WHERE Produto.proGrupoProduto = ?");
 
