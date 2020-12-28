@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import db.ExcecoesDB;
 import entidades.negocio.GrupoProduto;
 
 public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
-
+	
 	private Connection conn;
 
 	public GrupoProdutoDaoJDBC(Connection conn) {
@@ -29,10 +30,16 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO GrupoProduto " + "(grpDescGrupo) " + "VALUES " + "(?)",
+			st = conn.prepareStatement("INSERT INTO GrupoProduto " + "(grpDescGrupo, grpGrupoProdutoPai , sysAltRegistro) " + "VALUES " + "(?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 
-			st.setString(1, grupoProduto.getDescGrupo());
+			st.setString(1, grupoProduto.getDescGrupo1().trim());
+			if (grupoProduto.getGrupoPai() != null) {
+				st.setInt(2, grupoProduto.getGrupoPai());
+			} else {
+				st.setString(2, null);
+			}
+			st.setDate(3, null);
 
 			int linhasAfetadas = st.executeUpdate();
 
@@ -58,11 +65,17 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("UPDATE GrupoProduto " + "SET grpDescGrupo = ? " + "WHERE idGrupoProduto = ?");
+			st = conn.prepareStatement("UPDATE GrupoProduto " + "SET grpDescGrupo = ?, grpGrupoProdutoPai = ?, sysAltRegistro = ? " + "WHERE idGrupoProduto = ?");
 
-			st.setString(1, grupoProduto.getDescGrupo());
-			st.setInt(2, grupoProduto.getId());
-
+			st.setString(1, grupoProduto.getDescGrupo1().trim());
+			if (grupoProduto.getGrupoPai() != null) {
+				st.setInt(2, grupoProduto.getGrupoPai());
+			} else {
+				st.setString(2, null);
+			}
+			st.setTimestamp(3, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+			st.setInt(4, grupoProduto.getId());
+			
 			st.executeUpdate();
 		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
@@ -123,6 +136,9 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		GrupoProduto grp = new GrupoProduto();
 		grp.setId(rs.getInt("idGrupoProduto"));
 		grp.setDescGrupo(rs.getString("grpDescGrupo"));
+		grp.setGrupoPai(rs.getInt("grpGrupoProdutoPai"));
+		grp.setSysRegistro(new Date()); 
+		grp.setSysAltRegistro(new Date());
 		return grp;
 	}
 
@@ -132,8 +148,19 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement("SELECT * " + "FROM GrupoProduto " + "ORDER BY idGrupoProduto");
+			st = conn.prepareStatement(/*"SELECT GP.*, G.grpGrupoProdutoPai " 
+					+ "FROM GrupoProduto GP "
+					+ "LEFT JOIN GrupoProduto G on GP.idGrupoProduto = G.grpGrupoProdutoPai "
+					+ "ORDER BY idGrupoProduto"*/
+					
+					"SELECT * FROM VW_GrupoProduto_Ordenado_GrupoPai_GruposFilho "
 
+					+ "ORDER BY grpunion ASC, idgrupoproduto ASC" 
+					
+					);
+
+			
+			
 			rs = st.executeQuery();
 
 			List<GrupoProduto> list = new ArrayList<>();

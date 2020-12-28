@@ -1,6 +1,7 @@
 package entidades.negocio;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Produto implements Serializable {
 
@@ -10,18 +11,22 @@ public class Produto implements Serializable {
 	private Integer codigo;
 	private String descProd;
 	private Double preco;
+	private Date sysRegistro;
+	private Date sysAltRegistro;
 	
 	private GrupoProduto grupoProduto;
 
 	public Produto() {
 	}
 
-	public Produto(Integer id, Integer codigo, String descProd, Double preco, GrupoProduto grupoProduto) {
+	public Produto(Integer id, Integer codigo, String descProd, Double preco, GrupoProduto grupoProduto, Date sysRegistro, Date sysAltRegistro) {
 		this.id = id;
 		this.codigo = codigo;
 		this.descProd = descProd;
 		this.preco = preco;
 		this.grupoProduto = grupoProduto;
+		this.sysRegistro = sysRegistro;
+		this.sysAltRegistro = sysAltRegistro;
 	}
 
 	public Integer getId() {
@@ -62,6 +67,22 @@ public class Produto implements Serializable {
 
 	public void setGrupoProduto(GrupoProduto grupoProduto) {
 		this.grupoProduto = grupoProduto;
+	}
+	
+	public Date getSysRegistro() {
+		return sysRegistro;
+	}
+
+	public void setSysRegistro(Date sysRegistro) {
+		this.sysRegistro = sysRegistro;
+	}
+
+	public Date getSysAltRegistro() {
+		return sysAltRegistro;
+	}
+
+	public void setSysAltRegistro(Date sysAltRegistro) {
+		this.sysAltRegistro = sysAltRegistro;
 	}
 
 	public static long getSerialversionuid() {

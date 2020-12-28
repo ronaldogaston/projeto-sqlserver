@@ -1,6 +1,7 @@
 package entidades.negocio;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class GrupoProduto implements Serializable {
 
@@ -8,14 +9,20 @@ public class GrupoProduto implements Serializable {
 
 	private Integer id;
 	private String descGrupo;
-	
+	private Integer grupoPai;
+	private Date sysRegistro;
+	private Date sysAltRegistro;
+
 	public GrupoProduto() {
 	}
 
-	public GrupoProduto(Integer id, String descGrupo) {
+	public GrupoProduto(Integer id, String descGrupo, Integer grupoPai, Date sysRegistro, Date sysAltRegistro) {
 		super();
 		this.id = id;
 		this.descGrupo = descGrupo;
+		this.grupoPai = grupoPai;
+		this.sysRegistro = sysRegistro;
+		this.sysAltRegistro = sysAltRegistro;
 	}
 
 	public Integer getId() {
@@ -26,12 +33,52 @@ public class GrupoProduto implements Serializable {
 		this.id = id;
 	}
 
-	public String getDescGrupo() {
+	public String getDescGrupo1() {
 		return descGrupo;
+	}
+
+	public String getDescGrupo() {
+		if (getGrupoPai() == 0 || getGrupoPai() == null) {
+			return descGrupo;
+		} else {
+			return "	  " + descGrupo;
+		}
 	}
 
 	public void setDescGrupo(String descGrupo) {
 		this.descGrupo = descGrupo;
+	}
+
+	public Integer getGrupoPai1() {
+		if (getGrupoPai() == 0 || getGrupoPai() == null) {
+			return null;
+		} else {
+			return grupoPai;
+		}
+	}
+
+	public Integer getGrupoPai() {
+		return grupoPai;
+	}
+
+	public void setGrupoPai(Integer grupoPai) {
+		this.grupoPai = grupoPai;
+	}
+
+	public Date getSysRegistro() {
+		return sysRegistro;
+	}
+
+	public void setSysRegistro(Date sysRegistro) {
+		this.sysRegistro = sysRegistro;
+	}
+
+	public Date getSysAltRegistro() {
+		return sysAltRegistro;
+	}
+
+	public void setSysAltRegistro(Date sysAltRegistro) {
+		this.sysAltRegistro = sysAltRegistro;
 	}
 
 	@Override
@@ -61,9 +108,15 @@ public class GrupoProduto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "["
-				+ id
-				+ "] - "
-				+ getDescGrupo();
+			//if (getGrupoPai() == 0 || getGrupoPai() == null) {
+				return "[" + id + "] " 
+						+ getDescGrupo1();
+			/*} else {
+				return  "[" + getGrupoPai() + "]"
+						//+ getDescGrupo1() 
+						+ " / " 
+						+ "[" + id + "] " 
+						+ getDescGrupo1();
+			}*/
 	}
 }

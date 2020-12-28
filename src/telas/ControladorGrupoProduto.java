@@ -51,7 +51,7 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 	private TableColumn<GrupoProduto, Integer> colunaDescGrupo; // Tipo Coluna. OBS: Lembrando que só declarar o mesmo
 																// não faz com que funcione. Verifique o método
 																// 'initialize (URL uri, ResourceBundle rb)'
-
+	
 	@FXML
 	private TableColumn<GrupoProduto, GrupoProduto> colunaEditar; // Tipo Coluna. OBS: Lembrando que só declarar o mesmo
 
@@ -93,7 +93,7 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 	private void InitializeNodes() {
 		colunaId.setCellValueFactory(new PropertyValueFactory<>("id")); // Comando para iniciar apropriadamento o
 		colunaDescGrupo.setCellValueFactory(new PropertyValueFactory<>("descGrupo")); // Comando para iniciar
-																						// apropriadamento o
+// apropriadamento o
 																						// comportamento da coluna na
 																						// tabela
 
@@ -164,7 +164,7 @@ public class ControladorGrupoProduto implements Initializable, AtualizaDadosList
 	private void inicBotaoRemove() {
 		colunaRemove.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
 		colunaRemove.setCellFactory(param -> new TableCell<GrupoProduto, GrupoProduto>() {
-			private final Button button = new Button("remove");
+			private final Button button = new Button("Remove");
 
 			@Override
 			protected void updateItem(GrupoProduto obj, boolean empty) {

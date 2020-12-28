@@ -26,13 +26,13 @@
       </ToolBar>
       <TableView fx:id="tableViewProduto" prefHeight="200.0" prefWidth="200.0">
         <columns>
-          <TableColumn fx:id="colunaId" prefWidth="56.0" text="ID" />
-          <TableColumn fx:id="colunaCodigo" prefWidth="124.0" text="Código" />
-          <TableColumn fx:id="colunaDescProd" prefWidth="124.0" text="Descrição" />
-          <TableColumn fx:id="colunaPreco" prefWidth="124.0" text="Preço" />
-          <TableColumn fx:id="colunaGrupoProduto" prefWidth="124.0" text="Grupo Produto" />
-            <TableColumn fx:id="colunaEditar" prefWidth="94.0" />
-            <TableColumn fx:id="colunaRemove" prefWidth="94.0" />
+          <TableColumn fx:id="colunaId" prefWidth="42.0" text="ID" />
+          <TableColumn fx:id="colunaCodigo" prefWidth="75.0" text="Código" />
+          <TableColumn fx:id="colunaDescProd" prefWidth="187.0" text="Descrição" />
+          <TableColumn fx:id="colunaGrupoProduto" prefWidth="237.0" text="Grupo Produto" />
+          <TableColumn fx:id="colunaPreco" prefWidth="48.0" text="Preço" />
+            <TableColumn fx:id="colunaEditar" prefWidth="55.0" />
+            <TableColumn fx:id="colunaRemove" prefWidth="65.0" />
         </columns>
       </TableView>
    </children>

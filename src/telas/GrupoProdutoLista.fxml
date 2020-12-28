@@ -27,9 +27,9 @@
       <TableView fx:id="tableViewGrupoProduto" prefHeight="200.0" prefWidth="200.0">
         <columns>
           <TableColumn fx:id="colunaId" prefWidth="56.0" text="ID" />
-          <TableColumn fx:id="colunaDescGrupo" prefWidth="105.0" text="Nome" />
-            <TableColumn fx:id="colunaEditar" prefWidth="94.0" />
-            <TableColumn fx:id="colunaRemove" prefWidth="94.0" />
+          <TableColumn fx:id="colunaDescGrupo" prefWidth="154.0" text="Descrição" />
+            <TableColumn fx:id="colunaEditar" prefWidth="57.0" />
+            <TableColumn fx:id="colunaRemove" prefWidth="66.0" />
         </columns>
       </TableView>
    </children>

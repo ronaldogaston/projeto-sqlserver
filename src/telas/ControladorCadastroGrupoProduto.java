@@ -36,9 +36,15 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 
 	@FXML
 	private TextField txtDescGrupo;
+	
+	@FXML
+	private TextField txtGrupoPai;
 
 	@FXML
 	private Label labelErrortxtDescricao;
+	
+	@FXML
+	private Label labelErrortxtDescGrupoPai;
 
 	@FXML
 	private Button btSalvar;
@@ -93,8 +99,10 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 			excecao.addErros("nome", " O campo não pode estar vazio!");
 		}
 		
-		grp.setDescGrupo(txtDescGrupo.getText());
-
+		grp.setDescGrupo(txtDescGrupo.getText().toUpperCase());
+		
+		grp.setGrupoPai(Utils.tryParseToInt(txtGrupoPai.getText())); // Verifica se o campo está preenchido com número inteiro
+		
 		if (excecao.getErros().size() > 0) { // Teste na coleção de erros, se há algum erro.
 			throw excecao;
 		}
@@ -116,7 +124,12 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 			throw new IllegalStateException("GrupoProduto nulo!");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
-		txtDescGrupo.setText(entity.getDescGrupo());
+		txtDescGrupo.setText(entity.getDescGrupo1());
+		try {
+			txtGrupoPai.setText(String.valueOf(entity.getGrupoPai1()));
+		} catch (NullPointerException e) {
+			txtGrupoPai.setText(String.valueOf(entity.getGrupoPai()));
+		}
 	}
 
 	@Override
@@ -127,6 +140,7 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 	private void initializeNodes() {
 		Restricoes.setTextFieldInteger(txtId);
 		Restricoes.setTextFieldMaxLength(txtDescGrupo, 30);
+		Restricoes.setTextFieldInteger(txtGrupoPai);
 	}
 	
 	private void setMensagemDeErros(Map<String, String> erros) { //Método para pegar os erros da exceção e anexar na tela
@@ -134,6 +148,9 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 
 		if (fields.contains("nome")) {
 			labelErrortxtDescricao.setText(erros.get("nome"));
+		}
+		if (fields.contains("grupoPai")) {
+			labelErrortxtDescGrupoPai.setText(erros.get("grupoPai"));
 		}
 	}
 }

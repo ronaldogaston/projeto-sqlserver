@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +30,15 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO Produto " + "(proCodigo, proDescProd, proPreco, proGrupoProduto) "
-					+ "VALUES " + "(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			st = conn.prepareStatement("INSERT INTO Produto " + "(proCodigo, proDescProd, proPreco, proGrupoProduto, sysRegistro, sysAltRegistro) "
+					+ "VALUES " + "(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setInt(1, produto.getCodigo());
 			st.setString(2, produto.getDescProd());
 			st.setDouble(3, produto.getPreco());
 			st.setInt(4, produto.getGrupoProduto().getId());
+			st.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+			st.setDate(6, null);
 
 			int linhasAfetadas = st.executeUpdate();
 
@@ -62,13 +65,14 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 
 		try {
 			st = conn.prepareStatement("UPDATE Produto "
-					+ "SET proCodigo = ?, proDescProd = ?, proPreco = ?, proGrupoProduto = ? " + "WHERE idProduto = ?");
+					+ "SET proCodigo = ?, proDescProd = ?, proPreco = ?, proGrupoProduto = ?, sysAltRegistro = ? " + "WHERE idProduto = ?");
 
 			st.setInt(1, produto.getCodigo());
 			st.setString(2, produto.getDescProd());
 			st.setDouble(3, produto.getPreco());
 			st.setInt(4, produto.getGrupoProduto().getId());
-			st.setInt(5, produto.getId());
+			st.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+			st.setInt(6, produto.getId());
 
 			st.executeUpdate();
 		} catch (SQLException e) {
@@ -136,6 +140,8 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		produto.setDescProd(rs.getString("proDescProd"));
 		produto.setPreco(rs.getDouble("proPreco"));
 		produto.setGrupoProduto(grp);
+		grp.setSysRegistro(new Date()); 
+		grp.setSysAltRegistro(new Date());
 		return produto;
 	}
 
@@ -143,6 +149,7 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		GrupoProduto grp = new GrupoProduto();
 		grp.setId(rs.getInt("idGrupoProduto"));
 		grp.setDescGrupo(rs.getString("grpDescGrupo"));
+		grp.setGrupoPai(rs.getInt("grpGrupoProdutoPai"));
 		return grp;
 	}
 
@@ -152,9 +159,10 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement("SELECT * "
-					+ "FROM Produto INNER JOIN GrupoProduto "
-					+ "ON Produto.proGrupoProduto = GrupoProduto.idGrupoProduto " + "ORDER BY proDescProd");
+			st = conn.prepareStatement("SELECT * FROM "
+					+ "produto INNER JOIN grupoProduto on "
+					+ "grupoProduto.idGrupoProduto = proGrupoProduto "
+					+  "ORDER BY proDescProd");
 
 			rs = st.executeQuery();
 
