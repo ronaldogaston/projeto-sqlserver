@@ -195,10 +195,45 @@ public class ProdutoDaoJDBC implements ProdutoDao {
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement("SELECT Produto.*, GrupoProduto.grpDescGrupo as Desc_Grupo "
+			st = conn.prepareStatement(/*"SELECT Produto.*, GrupoProduto.grpDescGrupo as Desc_Grupo "
 					+ "FROM Produto INNER JOIN GrupoProduto "
 					+ "ON Produto.proGrupoProduto = GrupoProduto.idGrupoProduto "
-					+ "WHERE GrupoProduto.idGrupoProduto = ? " + "ORDER BY proDescProd");
+					+ "WHERE GrupoProduto.idGrupoProduto = ? " + "ORDER BY proDescProd"*/
+					
+					"with CTE_Rec as "
+					+ "( "
+					  + "select "
+					    + "idGrupoProduto, "
+					    + "grpDescGrupo, "
+					    + "grpGrupoProdutoPai, "
+					    + "cast(grpDescGrupo as varchar(1000)) as grpDescGrupo "
+					  + "from GrupoProduto "
+					 + "where grpGrupoProdutoPai is null "
+					  
+					 + "union all "
+					  
+					 + "select "
+					  +  "g.idGrupoProduto, "
+					   + "g.grpDescGrupo, "
+					    + "g.grpGrupoProdutoPai, "
+					    + "cast(c.grpDescGrupo + '/' + g.grpDescGrupo as varchar(1000)) "
+					  + "from CTE_Rec as c "
+					  + "inner join GrupoProduto as g "
+					    + "on g.grpGrupoProdutoPai = c.idGrupoProduto "
+		
+					+ "select "
+						+ "P.idProduto, " 
+						+ "P.proCodigo, "
+						+ "P.proDescProd, "
+						+ "P.proPreco, "
+						+ "CTE.grpDescGrupo, "
+						+ "P.sysRegistro, "
+						+ "P.sysAltRegistro "
+						+ "from CTE_Rec CTE "
+						+ "inner join Produto P on CTE.idGrupoProduto = P.proGrupoProduto "
+						+ "order by P.proDescProd"
+					
+					);
 
 			st.setInt(1, grpGrupoProduto.getId());
 			rs = st.executeQuery();

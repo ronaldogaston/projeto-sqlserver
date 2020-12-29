@@ -18,7 +18,7 @@ import db.ExcecoesDB;
 import entidades.negocio.GrupoProduto;
 
 public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
-	
+
 	private Connection conn;
 
 	public GrupoProdutoDaoJDBC(Connection conn) {
@@ -30,7 +30,8 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO GrupoProduto " + "(grpDescGrupo, grpGrupoProdutoPai , sysAltRegistro) " + "VALUES " + "(?, ?, ?)",
+			st = conn.prepareStatement("INSERT INTO GrupoProduto "
+					+ "(grpDescGrupo, grpGrupoProdutoPai , sysAltRegistro) " + "VALUES " + "(?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, grupoProduto.getDescGrupo1().trim());
@@ -65,7 +66,8 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("UPDATE GrupoProduto " + "SET grpDescGrupo = ?, grpGrupoProdutoPai = ?, sysAltRegistro = ? " + "WHERE idGrupoProduto = ?");
+			st = conn.prepareStatement("UPDATE GrupoProduto "
+					+ "SET grpDescGrupo = ?, grpGrupoProdutoPai = ?, sysAltRegistro = ? " + "WHERE idGrupoProduto = ?");
 
 			st.setString(1, grupoProduto.getDescGrupo1().trim());
 			if (grupoProduto.getGrupoPai() != null) {
@@ -75,7 +77,7 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 			}
 			st.setTimestamp(3, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
 			st.setInt(4, grupoProduto.getId());
-			
+
 			st.executeUpdate();
 		} catch (SQLException e) {
 			throw new ExcecoesDB(e.getMessage());
@@ -135,9 +137,9 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 	private GrupoProduto instanciaGrupoProduto(ResultSet rs) throws SQLException {
 		GrupoProduto grp = new GrupoProduto();
 		grp.setId(rs.getInt("idGrupoProduto"));
-		grp.setDescGrupo(rs.getString("grpDescGrupo"));
+		grp.setDescGrupo(rs.getString("grpDescGrupo1"));
 		grp.setGrupoPai(rs.getInt("grpGrupoProdutoPai"));
-		grp.setSysRegistro(new Date()); 
+		grp.setSysRegistro(new Date());
 		grp.setSysAltRegistro(new Date());
 		return grp;
 	}
@@ -151,11 +153,40 @@ public class GrupoProdutoDaoJDBC implements GrupoProdutoDao {
 			st = conn.prepareStatement(/*"SELECT GP.*, G.grpGrupoProdutoPai " 
 					+ "FROM GrupoProduto GP "
 					+ "LEFT JOIN GrupoProduto G on GP.idGrupoProduto = G.grpGrupoProdutoPai "
-					+ "ORDER BY idGrupoProduto"*/
+					+ "ORDER BY idGrupoProduto"
 					
 					"SELECT * FROM VW_GrupoProduto_Ordenado_GrupoPai_GruposFilho "
 
-					+ "ORDER BY grpunion ASC, idgrupoproduto ASC" 
+					+ "ORDER BY grpunion ASC, idgrupoproduto ASC" */
+					
+					"with CTE_Rec as "
+					+ "( "
+					+  "select "
+					 +  " GP.idGrupoProduto, "
+					  +  "GP.grpDescGrupo, "
+					   + "GP.grpGrupoProdutoPai, "
+						+"GP.sysRegistro, "
+						+"GP.sysAltRegistro, "
+					    +"cast(GP.grpDescGrupo as varchar(1000)) as grpDescGrupo1 "
+					  +"from GrupoProduto GP "
+					  +"where GP.grpGrupoProdutoPai is null "
+					  
+					  +"union all "
+					  
+					  +"select "
+					   +" GP.idGrupoProduto, "
+					    +"GP.grpDescGrupo, "
+					    +"GP.grpGrupoProdutoPai, "
+						+"GP.sysRegistro, "
+						+"GP.sysAltRegistro, "
+					    +"cast(CTE.grpDescGrupo1 + '/' + GP.grpDescGrupo as varchar(1000)) "
+					  +"from CTE_Rec as CTE "
+					  +"inner join GrupoProduto as GP "
+					   +"on GP.grpGrupoProdutoPai = CTE.idGrupoProduto"
+					+") "
+
+					+ "select * from CTE_Rec CTE "
+					+ "order by CTE.grpDescGrupo1"
 					
 					);
 

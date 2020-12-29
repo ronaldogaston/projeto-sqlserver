@@ -124,7 +124,15 @@ public class ControladorCadastroGrupoProduto implements Initializable{
 			throw new IllegalStateException("GrupoProduto nulo!");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
-		txtDescGrupo.setText(entity.getDescGrupo1());
+		try {
+			entity.getDescGrupo1();
+			String res = entity.getDescGrupo1().split("/")[1];
+			txtDescGrupo.setText(res);
+		} catch (NullPointerException e) {
+			txtDescGrupo.setText(entity.getDescGrupo1());
+		} catch (ArrayIndexOutOfBoundsException e) {
+			txtDescGrupo.setText(entity.getDescGrupo1());
+		}
 		try {
 			txtGrupoPai.setText(String.valueOf(entity.getGrupoPai1()));
 		} catch (NullPointerException e) {

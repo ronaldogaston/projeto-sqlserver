@@ -44,9 +44,9 @@
                   </Button>
                </children>
             </HBox>
-            <TextField fx:id="txtGrupoPai" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Grupo Pai" GridPane.rowIndex="2" />
             <Label fx:id="labelErrortxtDescGrupoPai" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <TextField fx:id="txtGrupoPai" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </children>

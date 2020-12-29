@@ -35,7 +35,7 @@
             <TextField fx:id="txtCodigo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="txtDescProd" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="txtPreco" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox fx:id="comboBoxGrupoProduto" prefHeight="25.0" prefWidth="196.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="comboBoxGrupoProduto" prefHeight="25.0" prefWidth="270.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label fx:id="labelErrorCodigo" textFill="#fc0000" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label fx:id="labelErrorDescProd" textFill="#fc0000" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label fx:id="labelErrorPreco" textFill="#fc0000" GridPane.columnIndex="2" GridPane.rowIndex="3" />
